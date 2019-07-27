@@ -121,7 +121,7 @@ This makes Aurora a bit tricky to set up - But don't worry, I've got you covered
 6. **Creating the Alexa Skill**
    - This is something you could do directly in the Alexa developer console, but here we're using the <a href="https://github.com/jovotech/jovo-cli">Jovo CLI</a> because it's super convenient. So be sure to have the Jovo CLI installed and optimally your <a href="https://developer.amazon.com/docs/smapi/quick-start-alexa-skills-kit-command-line-interface.html">ASK CLI and AWS CLI profiles set up</a>.
    - Write the name of the ASK CLI profile you plan to use into your local `.env` file as e.g. `ASK_PROFILE='default'`.
-   - Now execute `jovo build -p alexaSkill --stage local --deploy` from your command line. This builds the Skill manifest (`platforms/alexaSkill/skill.json`) and language model (`platforms/alexaSkill/models/en-US.json`) from the information in the project configuration file (`project.js`) and the Jovo language model (`models/en-US.json`), and uses them to set up a new Skill 'Dice Tournament' in your Alexa developer console.<br/>
+   - Now execute `jovo build --stage local --deploy` from your command line. This builds the Skill manifest (`platforms/alexaSkill/skill.json`) and language model (`platforms/alexaSkill/models/en-US.json`) from the information in the project configuration file (`project.js`) and the Jovo language model (`models/en-US.json`), and uses them to set up a new Skill 'Dice Tournament' in your Alexa developer console.<br/>
     The result should look like this:<br/>
     <img src="https://dicechampionship.s3-eu-west-1.amazonaws.com/diceChampionship_buildLocal.png" width="65%"><br/>
     - Now copy the Skill ID from the console output and paste it as the value of the `SKILL_ID_STAGING` variable in your `.env` file.
@@ -133,7 +133,7 @@ You can already test your Skill in the Alexa developer console, or on your devic
 The remaining steps are optional, but recommended. Before we proceed to uploading the Skill to Lambda, let me explain the staging setup.
 
 
-7. **Reviewing the staging setup**
+1. **Reviewing the staging setup**
    - This project comes  with a setup for **three stages**, to propagate good practices and let you try out things both locally and on Lambda, because it might behave differently (e.g. in terms of latency)
     <table>
         <tr>
@@ -171,7 +171,7 @@ The remaining steps are optional, but recommended. Before we proceed to uploadin
                 <code>${JOVO_WEBHOOK_URL}</code>
             </td>
             <td>
-                <code>DYNAMODB_TABLE_NAME</code>
+                <code>AURORA_DATABASE_NAME</code>
             </td>
             <td>
                 <code>SKILL_ID_STAGING</code>
@@ -194,7 +194,7 @@ The remaining steps are optional, but recommended. Before we proceed to uploadin
                 <code>LAMBDA_ARN_STAGING</code>
             </td>
             <td>
-                <code>DYNAMODB_TABLE_NAME</code>
+                <code>AURORA_DATABASE_NAME</code>
             </td>
             <td>
                 <code>SKILL_ID_STAGING</code>
@@ -217,7 +217,7 @@ The remaining steps are optional, but recommended. Before we proceed to uploadin
                 <code>LAMBDA_ARN_LIVE</code>
             </td>
             <td>
-                <code>DYNAMODB_TABLE_NAME</code>*
+                <code>AURORA_DATABASE_NAME</code>*
             </td>
             <td>
                 <code>SKILL_ID_LIVE</code>
@@ -231,18 +231,18 @@ The remaining steps are optional, but recommended. Before we proceed to uploadin
         </tr>
     </table>
     * It would make sense for your live Skill to use a different database than the `local` and `staging` stages<br/><br/>
-7. **Uploading your Skill code to Lambda**
+2. **Uploading your Skill code to Lambda**
    - After having reviewed the staging setup, it's clear that uploading your Skill to Lambda is as easy as building and deploying the **staging stage** of your project.
    - To be able to upload your code to Lambda with the Jovo CLI, make sure your AWS CLI profile is linked to your ASK CLI profile, and has Lambda upload privileges
-   - Now all you need to do it execute `jovo build -p alexaSkill --stage staging --deploy`
+   - Now all you need to do it execute `jovo build --stage staging --deploy`
    - The result should look like this: <br/>
     <img src="https://dicechampionship.s3-eu-west-1.amazonaws.com/screenshots/buildStaging_aurora.png" width="90%"><br/>
    - Again, you can now test your Skill in the Alexa developer console just like after step 5, in the same Skill
-8. **Preparing and deploying the live stage**
+3. **Preparing and deploying the live stage**
    - I'll cover this part more briefly than the ones before, because it's more about deployment than about getting this Skill to work
    - First, you need a **new Lambda function** - Just set one up like in **step 4** (with the same role, trigger and environment variables), and copy its ARN as the value of `LAMBDA_ARN_LIVE` in your `.env` file
    - If you want to use a **different DynamoDB table** for your live stage, you need to set one up (with the same hash key `id`), paste its name into the environment variable `DYNAMODB_TABLE_NAME` of your Lambda function, and accordingly expand your policy `diceChampionship_policy`'s resource part
-   - To set up the **new Skill** (using the new Lambda endoint, the invocation name 'dice championship', and an expanded version of the manifest including a different Skill icon), execute `jovo build -p alexaSkill --stage live --deploy`. 
+   - To set up the **new Skill** (using the new Lambda endoint, the invocation name 'dice championship', and an expanded version of the manifest including a different Skill icon), execute `jovo build --stage live --deploy`. 
    - After the first deployment, copy the new Skill's ID and paste it as the value of `SKILL_ID_LIVE` in your `.env` file
 
 # Investigating your leaderboard
@@ -256,7 +256,7 @@ Your connection to the cluster might already be established, but if it isn't you
 
 In this case, select the set of credentials you already established in **step 2** ("admin" in the case of my screenshot), and directly connect to the "diceChampionship" database within the selected cluster.
 
-Now you should be in the **RDS Query Editor**, where you can enter MySQL statements like `select * from scores order by score desc;` and hit '**Run**' to see the result. If you play some more and want to see the updated leaderboard, you need to click on '**Run**' again to refresh the result:
+Now you should be in the **RDS Query Editor**, where you can enter MySQL statements like `select * from scores order by score desc;` and hit '**Run**' to see the result. If you play some more and want to see the updated leaderboard, you need to click on '**Run**' again to refresh the result:<br/>
 <img src="https://dicechampionship.s3-eu-west-1.amazonaws.com/screenshots/aurora_step10.png" width="60%">
 
 # Wrapping it up
