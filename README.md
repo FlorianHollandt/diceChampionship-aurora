@@ -91,22 +91,22 @@ This makes Aurora a bit tricky to set up - But don't worry, I've got you covered
     You can already make a decision about your favorite AWS region for the steps and services described below, and include it in your `.env` file like this: `AURORA_REGION='eu-west-1'`<br/>
 2. **Setting up your Aurora database**
    - Go to the <a href="https://eu-west-1.console.aws.amazon.com/rds/home#databases:">AWS RDS console's database overview</a>, click on '**Create database**', select 'Amazon Aurora' with the 'MySQL 5.6-compatible' edition, and confirm:<br/>
-   <img src="https://exampleresources.s3-eu-west-1.amazonaws.com/aurora_step1.png" width="60%">
+    <img src="https://exampleresources.s3-eu-west-1.amazonaws.com/aurora_step1.png" width="60%"><br/>
    - Select the 'Serverless' **capactiy type**, and then create a **name, username and password** for your new database cluster (no need to write them into your `.env` file, they will be retrieved using AWS Secrets Manager, but more on that later):<br/>
-<img src="https://exampleresources.s3-eu-west-1.amazonaws.com/aurora_step2.png" width="60%">
+    <img src="https://exampleresources.s3-eu-west-1.amazonaws.com/aurora_step2.png" width="60%"><br/>
    - At the third page of the setup wizard you can leave things at their defaults, although if you lean towards paranoia (like me) you might want to **limit auto-scaling** to 2 capacity units for testing purposes:<br/>
-<img src="https://exampleresources.s3-eu-west-1.amazonaws.com/aurora_step3.png" width="60%">
+    <img src="https://exampleresources.s3-eu-west-1.amazonaws.com/aurora_step3.png" width="60%"><br/>
    - To **enable the Data API**, go back to the <a href="https://eu-west-1.console.aws.amazon.com/rds/home#databases:">RDS database overview</a>, select your new cluster, click on '**Modify**', enable the 'Web Service Data API' checkbox and click '**Continue**': <br/>
-<img src="https://exampleresources.s3-eu-west-1.amazonaws.com/aurora_step4.png" width="60%">
+    <img src="https://exampleresources.s3-eu-west-1.amazonaws.com/aurora_step4.png" width="60%"><br/>
    - From the details of your newly created Aurora cluster, get the **database ARN** under 'Configuration' and save it as the value of `AURORA_CLUSTER_ARN` in your `.env` file.
    - Now you can make your **first connection to your cluster**! Again, go to the <a href="https://eu-west-1.console.aws.amazon.com/rds/home#databases:">RDS database overview</a>, select your cluster, find the dropdown '**Actions**' and select '**Query**'.
    -  You're now asked to **enter your username and password** a last time before they are saved to AWS Secrets Manager. Enter them and '**Connect to database**':<br/>
-<img src="https://exampleresources.s3-eu-west-1.amazonaws.com/aurora_step5.png" width="60%">
+    <img src="https://exampleresources.s3-eu-west-1.amazonaws.com/aurora_step5.png" width="60%"><br/>
    - You can now **create a database within your cluster** via MySQL query. In case you want to name your database 'diceChampionship', use the query `CREATE DATABASE diceChampionship` and hit '**Run**'. Also, save the database name as the value of  `AURORA_DATABASE_NAME` in your `.env` file:<br/>
-<img src="https://exampleresources.s3-eu-west-1.amazonaws.com/aurora_step6.png" width="60%">
+    <img src="https://exampleresources.s3-eu-west-1.amazonaws.com/aurora_step6.png" width="60%"><br/>
 3. **Get the Secrets Manager credentials for your Aurora database**
    - Go to the <a href="https://eu-west-1.console.aws.amazon.com/secretsmanager/home#/listSecrets">AWS Secrets Manager's Secrets overview</a>, open the details for the Aurora credentials secret you have created in step 2, and **save the secret's ARN** as the value of `AURORA_SECRET_ARN` in your `.env` file:<br/>
-<img src="https://exampleresources.s3-eu-west-1.amazonaws.com/aurora_step7.png" width="60%">
+    <img src="https://exampleresources.s3-eu-west-1.amazonaws.com/aurora_step7.png" width="60%"><br/>
 4. **Setting up access to your Aurora database**
    - Depending on whether you want to run the Skill locally or on Lambda, you need either a **programmatic user** (aka serivce account) a **role** with access to both your new cluster and its credentials secret. To cover both, start out by creating a new <a href="https://console.aws.amazon.com/iam/home?#/policies">AWS IAM policy</a> 'diceChampionship_policy' using the one from the `policy.json` file in this repo.
    - Replace the Resource part for the `SecretsManagerDbCredentialsAccess` group with the ARN from **step 3** to be sure no other secrets of yours can be accessed with this policy.
