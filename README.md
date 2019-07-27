@@ -133,7 +133,7 @@ You can already test your Skill in the Alexa developer console, or on your devic
 The remaining steps are optional, but recommended. Before we proceed to uploading the Skill to Lambda, let me explain the staging setup.
 
 
-1. **Reviewing the staging setup**
+7. **Reviewing the staging setup**
    - This project comes  with a setup for **three stages**, to propagate good practices and let you try out things both locally and on Lambda, because it might behave differently (e.g. in terms of latency)
     <table>
         <tr>
@@ -231,14 +231,14 @@ The remaining steps are optional, but recommended. Before we proceed to uploadin
         </tr>
     </table>
     * It would make sense for your live Skill to use a different database than the `local` and `staging` stages<br/><br/>
-2. **Uploading your Skill code to Lambda**
+8. **Uploading your Skill code to Lambda**
    - After having reviewed the staging setup, it's clear that uploading your Skill to Lambda is as easy as building and deploying the **staging stage** of your project.
    - To be able to upload your code to Lambda with the Jovo CLI, make sure your AWS CLI profile is linked to your ASK CLI profile, and has Lambda upload privileges
    - Now all you need to do it execute `jovo build --stage staging --deploy`
    - The result should look like this: <br/>
     <img src="https://dicechampionship.s3-eu-west-1.amazonaws.com/screenshots/buildStaging_aurora.png" width="90%"><br/>
    - Again, you can now test your Skill in the Alexa developer console just like after step 5, in the same Skill
-3. **Preparing and deploying the live stage**
+9. **Preparing and deploying the live stage**
    - I'll cover this part more briefly than the ones before, because it's more about deployment than about getting this Skill to work
    - First, you need a **new Lambda function** - Just set one up like in **step 4** (with the same role, trigger and environment variables), and copy its ARN as the value of `LAMBDA_ARN_LIVE` in your `.env` file
    - If you want to use a **different DynamoDB table** for your live stage, you need to set one up (with the same hash key `id`), paste its name into the environment variable `DYNAMODB_TABLE_NAME` of your Lambda function, and accordingly expand your policy `diceChampionship_policy`'s resource part
