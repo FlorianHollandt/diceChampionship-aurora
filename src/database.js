@@ -1,5 +1,5 @@
 
-const AWS = require('aws-sdk')
+const AWS = require('aws-sdk');
 const isLambda = require('is-lambda');
 
 const config = require('./config');
@@ -13,7 +13,7 @@ if (!isLambda) {
         }
     );
 }
-const RDS = new AWS.RDSDataService()
+const RDS = new AWS.RDSDataService();
 
 module.exports = {
 
@@ -41,11 +41,15 @@ module.exports = {
                     database: config.custom.aurora.database.name,
                     sql: sqlStatement,
                 };
-                const query = RDS.executeStatement(
+                RDS.executeStatement(
                     parameters,
                     (error, results) => {
-                        console.log(`submitScore Result: ${JSON.stringify(results, null, 4)}`);
-                        console.log(`submitScore Error: ${JSON.stringify(error, null, 4)}`);
+                        console.log(`getRank Result: ${
+                            JSON.stringify(results, null, 4)
+                        }`);
+                        console.log(`getRank Error: ${
+                            JSON.stringify(error, null, 4)
+                        }`);
                         if (error) {
                             return reject(error);
                         }
@@ -76,11 +80,15 @@ module.exports = {
                     database: config.custom.aurora.database.name,
                     sql: sqlStatement,
                 };
-                const query = RDS.executeStatement(
+                RDS.executeStatement(
                     parameters,
                     (error, results) => {
-                        console.log(`getRank Result: ${JSON.stringify(results, null, 4)}`);
-                        console.log(`getRank Error: ${JSON.stringify(error, null, 4)}`);
+                        console.log(`getRank Result: ${
+                            JSON.stringify(results, null, 4)
+                        }`);
+                        console.log(`getRank Error: ${
+                            JSON.stringify(error, null, 4)
+                        }`);
                         if (error) {
                             return reject(error);
                         }
@@ -94,6 +102,5 @@ module.exports = {
             }
         });
     },
-
 };
 

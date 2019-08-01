@@ -55,9 +55,9 @@ app.setHandler({
         this.$speech
             .t('dice-intro')
             .t('dice-sound');
-        
+
         let sumOfDice = 0;
-        for (let i = 0; i <  config.custom.game.numberOfDice; i++ ){
+        for (let i = 0; i < config.custom.game.numberOfDice; i++) {
             sumOfDice += getDiceRollResult();
         }
         this.$data.sumOfDice = sumOfDice;
@@ -80,7 +80,7 @@ app.setHandler({
         const rank = await database.getRank(currentHighscore);
         console.timeEnd('database.getRank() ');
         console.log(`Rank: ${rank}`);
-        
+
         if (sumOfDice > previousHighscore) {
             console.time('database.submitScore() ');
             await database.submitScore(playerId, sumOfDice);
@@ -140,8 +140,8 @@ module.exports.app = app;
 
 function getDiceRollResult() {
     return Math.ceil(
-        Math.random() *  config.custom.game.sidesPerDice
-    )
+        Math.random() * config.custom.game.sidesPerDice
+    );
 }
 
 function getPlayerId(jovo) {
